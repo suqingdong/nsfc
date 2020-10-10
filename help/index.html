@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用帮助</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables@1.10.17/media/css/jquery.dataTables.min.css">
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+
+    #myTabContent {
+      margin-top: 10px;
+    }
+
+    table {
+      border: solid 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <ul class="nav nav-pills flex-column flex-sm-row" id="myTab" role="tablist">
+      <li class="flex-sm-fill text-sm-center nav-item" role="presentation">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+          aria-selected="true">申请代码</a>
+      </li>
+      <li class="flex-sm-fill text-sm-center nav-item" role="presentation">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+          aria-selected="false">资助类别</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <table class="table table-striped hover" id="field_codes" cellspacing="0" width="100%">
+          <caption class="text-center">申请代码列表</caption>
+        </table>
+      </div>
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <table class="table table-striped hover" id="support_types" cellspacing="0" width="100%">
+          <caption class="text-center">资助类别列表</caption>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables@1.10.17/media/js/jquery.dataTables.min.js"></script>
+
+<script src="field_codes.js"></script>
+<script src="support_types.js"></script>
+
+<script>
+  $(document).ready(function () {
+    console.log('start ...');
+    $('#field_codes').DataTable({
+      lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, 'All']
+      ],
+      data: field_codes,
+      columns: [{
+          data: 'code',
+          title: 'Code'
+        },
+        {
+          data: 'name',
+          title: 'Name'
+        }
+      ]
+    });
+    $('#support_types').DataTable({
+      lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, 'All']
+      ],
+      data: support_types,
+      columns: [{
+          data: 'value',
+          title: 'Code'
+        },
+        {
+          data: 'name',
+          title: 'Name'
+        }
+      ]
+    });
+  });
+</script>
+
+</html>

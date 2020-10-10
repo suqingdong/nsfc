@@ -1,0 +1,5 @@
+click
+pillow
+pytesseract
+prettytable
+webrequests
