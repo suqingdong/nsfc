@@ -21,6 +21,8 @@ pip install nsfc
 nsfc show-codes -t S
 nsfc show-codes -t Z
 ```
+> 在线查看：https://suqingdong.github.io/nsfc/help/index.html
+
 #### 资助项目查询
 ```
 # 1 运行时选择申请代码和批准年度

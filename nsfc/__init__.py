@@ -169,12 +169,12 @@ class NSFC(object):
                 if context['是否结题'] == 'true':
                     conclusion_context = self.conclusion_project(context['批准号'])
 
-                context['中文摘要'] = conclusion_context.get('projectAbstractC')
-                context['英文摘要'] = conclusion_context.get('projectAbstractE')
-                # context['结题摘要'] = conclusion_context.get('conclusionAbstract')
-                context['依托单位ID'] = conclusion_context.get('dependUintID')
-                context['项目负责人ID'] = conclusion_context.get('projectAdminID')
-                context['负责人职称'] = conclusion_context.get('adminPosition')
+                context['中文摘要'] = conclusion_context.get('projectAbstractC', '')
+                context['英文摘要'] = conclusion_context.get('projectAbstractE', '')
+                # context['结题摘要'] = conclusion_context.get('conclusionAbstract', '')
+                context['依托单位ID'] = conclusion_context.get('dependUintID', '')
+                context['项目负责人ID'] = conclusion_context.get('projectAdminID', '')
+                context['负责人职称'] = conclusion_context.get('adminPosition', '')
 
                 context['是否结题'] = '是' if context['是否结题'] == 'true' else '否'
 

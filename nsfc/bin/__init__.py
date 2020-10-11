@@ -25,15 +25,17 @@ nsfc search -c C05,C06 -y 2018,2019,2020
 
 nsfc search -c C05,C06 -y 2018,2019,2020 -t J
 
-# 4 指定输出文件，根据后缀判断格式(html, xlsx, csv/tsv, json, jl, pkl)
+# 4 指定输出文件和格式(html, xlsx, txt/tsv, json, jl, pkl)
 
-nsfc search -c C05 -y 2019 -o out.html
+nsfc search -c C05 -y 2019 -o out [默认 -O xlsx]
 
-nsfc search -c C05 -y 2019 -o out.xlsx
+nsfc search -c C05 -y 2019 -o out -O html
 
-nsfc search -c C05 -y 2019 -o out.tsv
+nsfc search -c C05 -y 2019 -o out -O tsv
 
-nsfc search -c C05 -y 2019 -o out.json
+nsfc search -c C05 -y 2019 -o out -O json
+
+nsfc search -c C05 -y 2019 -o out -O jl
 '''
 
 
@@ -46,7 +48,8 @@ def cli():
 @cli.command(help=click.style('查看申请/资助类别代码', fg='cyan', bold=True))
 @click.option('-t', '--types', help='S: 申请代码， Z: 资助类别', type=click.Choice('SZ'))
 def show_codes(types):
-    types = types or click.prompt('请输入要查看的内容： S - 申请代码， Z - 资助类别', type=click.Choice('SZ'))
+    types = types or click.prompt(
+        '请输入要查看的内容： S - 申请代码， Z - 资助类别', type=click.Choice('SZ'))
     nsfc = NSFC()
     if types == 'S':
         util.show_table(nsfc.field_codes, fields=['name', 'code'])
@@ -58,51 +61,60 @@ def show_codes(types):
 @click.option('-c', '--codes', help='申请(学科)代码')
 @click.option('-y', '--years', help='年度')
 @click.option('-p', '--projects', help='资助类别(代码)')
-@click.option('-o', '--outfile', help='输出文件名', default='nsfc.xlsx')
+@click.option('-o', '--outfile', help='输出文件名前缀', default='nsfc', show_default=True)
+@click.option('-O', '--outtype', help='输出文件格式', default='xlsx', show_default=True, type=click.Choice('html xlsx tsv txt json jl pkl all'.split()))
 @click.option('-t', '--type', help='查询类型：Z - 资助项目，J - 结题项目', type=click.Choice('ZJ'), default='Z', show_default=True)
 def search(**kwargs):
     nsfc = NSFC()
 
     nsfc.logger.debug('input arguments: {}'.format(kwargs))
 
-    projects = kwargs['projects'].split(',') if kwargs['projects'] else [each['value'] for each in nsfc.support_types]
-    years = kwargs['years'].split(',') if kwargs['years'] else click.prompt('请输入批准年度').split(',')
-    child_codes = nsfc.get_child_codes(kwargs['codes'] or click.prompt('请输入申请代码'))
+    projects = kwargs['projects'].split(',') if kwargs['projects'] else [
+        each['value'] for each in nsfc.support_types]
+    years = kwargs['years'].split(
+        ',') if kwargs['years'] else click.prompt('请输入批准年度').split(',')
+    child_codes = nsfc.get_child_codes(
+        kwargs['codes'] or click.prompt('请输入申请代码'))
 
     out_data = []
     for code in child_codes:
         for year in years:
             for project in projects:
-                nsfc.logger.debug('>>> crawling: {} - {} - {}'.format(code, year, project))
+                nsfc.logger.debug(
+                    '>>> crawling: {} - {} - {}'.format(code, year, project))
                 if kwargs['type'] == 'Z':
-                    result = nsfc.funding_query(code=code, ratifyYear=year, projectType=project)
+                    result = nsfc.funding_query(
+                        code=code, ratifyYear=year, projectType=project)
                 else:
-                    result = nsfc.project_query(code=code, conclusionYear=year, projectType=project)
-                out_data += [context for context in nsfc.format_context(result)]
+                    result = nsfc.project_query(
+                        code=code, conclusionYear=year, projectType=project)
+                out_data += [
+                    context for context in nsfc.format_context(result)]
 
     if out_data:
-        outfile = kwargs['outfile']
+       
         nsfc.logger.info('{} results found.'.format(len(out_data)))
 
-        ext = outfile.rsplit('.', 1)[-1]
-
-        if ext == 'html':
-            Export(out_data, outfile).to_html()
-        elif ext == 'xlsx':
-            Export(out_data, outfile).to_excel()
-        elif ext == 'json':
-            Export(out_data, outfile).to_json()
-        elif ext == 'jl':
-            Export(out_data, outfile).to_jsonlines()
-        elif ext == 'pkl':
-            Export(out_data, outfile).to_pickle()
-        elif ext in ('tsv', 'txt'):
-            Export(out_data, outfile).to_tsv()
+        if kwargs['outtype'] == 'all':
+            outtypes = 'html xlsx json jl pkl tsv'.split()
         else:
-            nsfc.logger.warning('文件后缀不可用，输出为默认：nsfc.xlsx')
-            Export(out_data, 'nsfc.xlsx').to_excel()
+            outtypes = [kwargs['outtype']]
 
-        nsfc.logger.info('save file: {}'.format(outfile))
+        for outtype in outtypes:
+            outfile = '{}.{}'.format(kwargs['outfile'], outtype)
+            if outtype == 'html':
+                Export(out_data, outfile).to_html()
+            elif outtype == 'xlsx':
+                Export(out_data, outfile).to_excel()
+            elif outtype == 'json':
+                Export(out_data, outfile).to_json()
+            elif outtype == 'jl':
+                Export(out_data, outfile).to_jsonlines()
+            elif outtype == 'pkl':
+                Export(out_data, outfile).to_pickle()
+            elif outtype in ('tsv', 'txt'):
+                Export(out_data, outfile).to_tsv()
+            nsfc.logger.info('save file: {}'.format(outfile))
     else:
         nsfc.logger.info('no result for your input.')
 
