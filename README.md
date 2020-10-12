@@ -38,6 +38,7 @@ pip install nsfc
 ```
 nsfc
 ```
+![](https://suqingdong.github.io/nsfc/help/example1.png)
 
 #### 查看申请代码/资助类别
 ```
