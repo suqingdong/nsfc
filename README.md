@@ -10,12 +10,35 @@
 > - 资助类别：http://output.nsfc.gov.cn/common/data/supportTypeData
 > - 资助类别(仅一级分类)：http://output.nsfc.gov.cn/common/data/supportTypeClassOneData
 
+## 依赖
+- Linux/Windows
+- Python2/Python3
+- tesseract
+
+### `tesseract` 是图像识别工具，用于识别验证码
+#### Linux
+```
+yum install tesseract
+```
+
+#### Windows
+- [官网](https://digi.bib.uni-mannheim.de/tesseract/)
+- [百度云](https://pan.baidu.com/s/1k7u01BE8e2zu5AoubE5FOw)(提取码: `5nxb`)
+> 安装后需要把tesseract添加到环境变量中
+![](https://suqingdong.github.io/nsfc/help/windows_path_add.png)
+![](https://suqingdong.github.io/nsfc/help/tesseract.png)
+
 ## 安装
 ```bash
 pip install nsfc
 ```
 
 ## 使用示例
+#### 查看帮助
+```
+nsfc
+```
+
 #### 查看申请代码/资助类别
 ```
 nsfc show-codes -t S
@@ -41,7 +64,6 @@ nsfc show-codes -t Z
 - nsfc search -c C05 -y 2019 -o out -O json
 - nsfc search -c C05 -y 2019 -o out -O jl
 ```
-
 
 ## 结果示例
 - [html](https://suqingdong.github.io/nsfc/examples/demo.html)
