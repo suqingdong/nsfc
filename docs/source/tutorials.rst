@@ -1,18 +1,20 @@
 ===========
-安装说明
+使用教程
 ===========
 
+安装说明
+==========
 Install with ``pip``::
 
     pip install nsfc
 
 
-==========
+
 基本用法
 ==========
 
 查看帮助
-==========
+---------
 
 .. code:: console
 
@@ -22,7 +24,7 @@ Install with ``pip``::
 
 
 查看申请代码/资助类别
-=======================
+----------------------
 
 .. code:: console
 
@@ -33,7 +35,7 @@ Install with ``pip``::
 
 
 资助项目查询
-=======================
+----------------------
 
 .. code:: console
 
@@ -54,7 +56,7 @@ Install with ``pip``::
     - nsfc search -c C05 -y 2019 -o out -O jl
 
 结果示例
-=======================
+----------------------
 
 * html: https://suqingdong.github.io/nsfc/examples/demo.html
 * json: https://suqingdong.github.io/nsfc/examples/demo.json
