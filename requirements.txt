@@ -1,5 +1,6 @@
 click
 pillow
+openpyxl
 pytesseract
 prettytable
 webrequests
