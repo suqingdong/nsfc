@@ -50,11 +50,10 @@ def cli():
 @cli.command(help=click.style('查看申请/资助类别代码', fg='cyan', bold=True))
 @click.option('-t', '--types', help='S: 申请代码， Z: 资助类别', type=click.Choice('SZ'))
 def show_codes(types):
-    types = types or click.prompt(
-        '请输入要查看的内容： S - 申请代码， Z - 资助类别', type=click.Choice('SZ'))
+    types = types or click.prompt('请输入要查看的内容： S - 申请代码， Z - 资助类别', type=click.Choice('SZ'))
     nsfc = NSFC()
     if types == 'S':
-        util.show_table(nsfc.field_codes, fields=['name', 'code'])
+        util.show_table(nsfc.field_codes, fields=['name', 'code'], pager=True)
     else:
         util.show_table(nsfc.support_types, fields=['name', 'value'])
 
@@ -71,10 +70,8 @@ def search(**kwargs):
 
     nsfc.logger.debug('input arguments: {}'.format(kwargs))
 
-    projects = kwargs['projects'].split(',') if kwargs['projects'] else [
-        each['value'] for each in nsfc.support_types]
-    years = kwargs['years'].split(
-        ',') if kwargs['years'] else click.prompt('请输入批准年度').split(',')
+    projects = kwargs['projects'].split(',') if kwargs['projects'] else [each['value'] for each in nsfc.support_types]
+    years = kwargs['years'].split(',') if kwargs['years'] else click.prompt('请输入批准年度').split(',')
     child_codes = nsfc.get_child_codes(
         kwargs['codes'] or click.prompt('请输入申请代码'))
 
@@ -85,16 +82,12 @@ def search(**kwargs):
                 nsfc.logger.debug(
                     '>>> crawling: {} - {} - {}'.format(code, year, project))
                 if kwargs['type'] == 'Z':
-                    result = nsfc.funding_query(
-                        code=code, ratifyYear=year, projectType=project)
+                    result = nsfc.funding_query(code=code, ratifyYear=year, projectType=project)
                 else:
-                    result = nsfc.project_query(
-                        code=code, conclusionYear=year, projectType=project)
-                out_data += [
-                    context for context in nsfc.format_context(result)]
+                    result = nsfc.project_query(code=code, conclusionYear=year, projectType=project)
+                out_data += [context for context in nsfc.format_context(result)]
 
     if out_data:
-       
         nsfc.logger.info('{} results found.'.format(len(out_data)))
 
         if kwargs['outtype'] == 'all':

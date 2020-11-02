@@ -18,7 +18,7 @@ def safe_open(filename, mode='r'):
 
 
 
-def show_table(data, fields=None):
+def show_table(data, fields=None, pager=False):
     """
         Show PrettyTable
     """
@@ -26,8 +26,15 @@ def show_table(data, fields=None):
     table = prettytable.PrettyTable(['index'] + fields)
     for n, row in enumerate(data, 1):
         table.add_row([n] + list(map(row.get, fields)))
-    click.secho(str(table), fg='cyan', bold=True)
 
+    for field in table.field_names:
+        table.align[field] = 'l'
+        
+    table_string = click.style(str(table), fg='cyan', bold=True)
+    if pager:
+        click.echo_via_pager(table_string, color=False)
+    else:
+        click.echo(table_string)
 
 
 def query_payload(**kwargs):
