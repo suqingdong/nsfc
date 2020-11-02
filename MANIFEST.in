@@ -1,2 +1,3 @@
 include requirements.txt
 include nsfc/util/index.html
+include nsfc/version/version.json

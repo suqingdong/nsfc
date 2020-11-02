@@ -2,13 +2,13 @@
 # -*- coding=utf-8 -*-
 import click
 
-from nsfc import util, NSFC, __version__, __author__, __author_email__
+from nsfc import util, NSFC, version_info
 from nsfc.util.export import Export
 
 
 __epilog__ = '''
-contact: {__author__} <{__author_email__}>
-'''.format(**locals())
+contact: {author} <{author_email}>
+'''.format(**version_info)
 
 
 __search_examples__ = '''
@@ -40,7 +40,9 @@ nsfc search -c C05 -y 2019 -o out -O jl
 
 
 @click.group(epilog=__epilog__, help=click.style('国家自然科学基金查询系统', fg='green', bold=True))
-@click.version_option(version=__version__, prog_name='nsfc')
+@click.version_option(version=version_info['version'],
+                      prog_name='nsfc',
+                      message=click.style('%(prog)s, %(version)s [update: {build_time}]'.format(**version_info), fg='yellow', bold=True))
 def cli():
     pass
 

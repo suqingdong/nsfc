@@ -1,17 +1,19 @@
 # -*- encoding: utf8 -*-
 import os
+import json
 import codecs
 from setuptools import setup, find_packages
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+version_info = json.load(open(os.path.join(BASE_DIR, 'nsfc', 'version', 'version.json')))
 
 
 setup(
     name='nsfc',
-    version='1.0.2',
-    author='suqingdong',
-    author_email='1078595229@qq.com',
+    version=version_info['version'],
+    author=version_info['author'],
+    author_email=version_info['author_email'],
     description='国家自然科学基金查询',
     long_description=codecs.open(os.path.join(BASE_DIR, 'README.md'), encoding='utf-8').read(),
     long_description_content_type="text/markdown",

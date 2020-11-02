@@ -3,6 +3,7 @@
 """
     国家自然科学基金查询系统
 """
+import os
 import sys
 import json
 
@@ -25,9 +26,8 @@ if PY2:
     sys.setdefaultencoding('utf-8')
 
 
-__version__ = '1.0.2'
-__author__ = 'suqingdong'
-__author_email__ = '1078595229@qq.com'
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+version_info = json.load(open(os.path.join(BASE_DIR, 'version', 'version.json')))
 
 
 class NSFC(object):
