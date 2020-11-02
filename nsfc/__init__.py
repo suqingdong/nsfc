@@ -161,7 +161,7 @@ class NSFC(object):
                 tmp = dict(zip(header, row[1:]))
 
                 context = OrderedDict()
-                [context.update(h='') for h in header]
+                [context.update({h: ''}) for h in header]
                 context.update(tmp)
 
                 conclusion_context = {}
