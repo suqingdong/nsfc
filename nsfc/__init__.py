@@ -155,14 +155,13 @@ class NSFC(object):
             查询结果转成字典
         """
         header = '项目名称 批准号 项目类别 依托单位 项目负责人 资助经费(万元) 批准年度 关键词 是否结题 研究成果(期刊论文;会议论文;著作;奖励;专利) 依托单位ID 项目负责人ID 项目类别代码 申请代码 起止年月'.split()
-        context = OrderedDict()
-
-        for each in header:
-            context[each] = ''     
 
         for data in query_result:
             for row in data['data']['resultsData']:
                 tmp = dict(zip(header, row[1:]))
+
+                context = OrderedDict()
+                [context.update(h='') for h in header]
                 context.update(tmp)
 
                 conclusion_context = {}
