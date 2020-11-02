@@ -49,13 +49,14 @@ def cli():
 
 @cli.command(help=click.style('查看申请/资助类别代码', fg='cyan', bold=True))
 @click.option('-t', '--types', help='S: 申请代码， Z: 资助类别', type=click.Choice('SZ'))
-def show_codes(types):
+@click.option('-p', '--pager', help='是否开启分页显示', is_flag=True)
+def show_codes(types, pager):
     types = types or click.prompt('请输入要查看的内容： S - 申请代码， Z - 资助类别', type=click.Choice('SZ'))
     nsfc = NSFC()
     if types == 'S':
-        util.show_table(nsfc.field_codes, fields=['name', 'code'], pager=True)
+        util.show_table(nsfc.field_codes, fields=['name', 'code'], pager=pager)
     else:
-        util.show_table(nsfc.support_types, fields=['name', 'value'])
+        util.show_table(nsfc.support_types, fields=['name', 'value'], pager=pager)
 
 
 @cli.command(help=click.style('资助/结题项目查询', fg='yellow', bold=True), epilog=__search_examples__)
