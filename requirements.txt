@@ -1,0 +1,4 @@
+click
+sqlalchemy
+webrequests
+simple-loggers

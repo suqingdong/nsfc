@@ -1,0 +1,1 @@
+python3 -m nsfc.bin.main -y 2019 -c A -O A.2019 &> A.2019.log
