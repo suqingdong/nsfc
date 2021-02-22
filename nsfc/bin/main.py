@@ -24,13 +24,15 @@ def main(**kwargs):
         os.makedirs(outdir)
     done = {each.rsplit('.', 1)[0]: 1 for each in os.listdir(outdir)}
 
-    for code in sorted(letpub.list_codes[code]):
+    code_list = letpub.list_codes
+
+    for code in sorted(code_list[code]):
         if f'{code}.{year}' in done:
             continue
         outfile = f'{outdir}/{code}.{year}.jl'
         try:
             with open(outfile, 'w') as out:
-                for context in letpub.search(code, start_year=year, end_year=year):
+                for context in letpub.search(code_list, code, start_year=year, end_year=year):
                     line = json.dumps(context, ensure_ascii=False) + '\n'
                     out.write(line)
             click.secho(f'save file: {outfile}')

@@ -24,7 +24,7 @@ class LetPub(object):
         return subcategory_list
     
 
-    def search(self, code, page=1, start_year='', end_year='', subcategory=''):
+    def search(self, code_list, code, page=1, start_year='', end_year='', subcategory=''):
         """项目查询，最多显示20页(200条)，超出时增加项目类别细分查询
         """
         params = {
@@ -57,14 +57,17 @@ class LetPub(object):
             if not subcategory:
                 print('too many result, search with subcategory ...')
                 for subcategory in self.subcategory_list:
-                    yield from self.search(code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
+                    yield from self.search(code_list, code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
             else:
-                print('too many result, please refine your input!')
-                exit(1)
+                print('too many result, search with subcategory and subclass ...')
+                for subcategory in self.subcategory_list:
+                    for code2 in code_list[code[0]][code]:
+                        if code2 != code:
+                            yield from self.search(code_list, code2, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
 
         if page < total_page:
             page += 1
-            yield from self.search(code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
+            yield from self.search(code_list, code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
 
     def parse_content(self, soup):
         """项目内容解析
@@ -99,19 +102,34 @@ class LetPub(object):
     def list_codes(self):
         url = self.base_url + '/js/nsfctags2019multiple.js'
         resp = WR.get_response(url)
-        codes = defaultdict(set)
+        codes = {}
         for line in resp.text.split('\n'):
             if line.startswith('subtag['):
                 linelist = line.strip().split("', '")
-                code = linelist[4]
+
+                code = linelist[4]  # 二级学科
+                code2 = linelist[5]  # 三级学科
+
                 if len(code) != 5:
                     continue
-                # print('>>>', code)
-                codes[code[0]].add(code)
+
+                if code[0] not in codes:
+                    codes[code[0]] = defaultdict(set)
+
+                codes[code[0]][code].add(code2)
+
         return codes
 
 
 if __name__ == '__main__':
+    from pprint import pprint
+
     letpub = LetPub()
-    for code in sorted(letpub.list_codes.get('A')):
-        print(code)
+    code_list = letpub.list_codes
+
+    # for code in sorted(code_list.get('A')):
+    #     print(code)
+    #     print(sorted(code_list['A'][code]))
+
+    for context in letpub.search(code_list, 'E0805', start_year=2016, end_year=2016):
+        print(context)

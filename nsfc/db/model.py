@@ -22,15 +22,15 @@ class Project(Base):
     money = Column(Float, comment='项目金额(万)')
     institution = Column(String(50), comment='依托单位')
 
-    start_time = Column(DATETIME, comment='开始时间')
-    end_time = Column(DATETIME, comment='结束时间')
+    start_time = Column(Integer, comment='开始时间(YYYYMM)')
+    end_time = Column(Integer, comment='结束时间(YYYYMM)')
 
     subject = Column(String(30), comment='所属学部')
     subject_class_list = Column(String(100), comment='学科分类分级')
     subject_code_list = Column(String(50), comment='学科代码分级')
     subject_code = Column(String(20), comment='学科代码')
 
-    finished = Column(BOOLEAN, comment='是否结题')
+    finished = Column(BOOLEAN, comment='是否结题', default=False)
 
     keyword = Column(String(100), comment='中文关键词')
     keyword_en = Column(String(100), comment='英文关键词')

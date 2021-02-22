@@ -1,6 +1,9 @@
 import re
+import sys
 import math
+import json
 
+import click
 from webrequests import WebRequest as WR
 
 
@@ -9,11 +12,11 @@ class MedSCI(object):
     url = 'https://www.medsci.cn/sci/nsfc.do'
 
     @classmethod
-    def search(cls, page=1, text='', project='', date_begin='', date_end=''):
+    def search(cls, page=1, txtitle='', project_classname_list='', date_begin='', date_end='', **kwargs):
         params = {
-            'txtitle': text,
+            'txtitle': txtitle,
             'page': page,
-            'project_classname_list': project,
+            'project_classname_list': project_classname_list,
             'cost_begin': '',
             'cost_end': '',
             'date_begin': date_begin,
@@ -23,17 +26,23 @@ class MedSCI(object):
         soup = WR.get_soup(cls.url, params=params)
         total_count = int(re.findall(r'\d+', soup.select_one('.list-result').text)[0])
         total_page = math.ceil(total_count / 15.)
-        print(f'total page: {total_page}, total count: {total_count}')
+        click.secho(f'total page: {total_page}, total count: {total_count}', err=True, fg='yellow')
+
         if total_count == 500:
-            print('too many results: {}'.format(params))
-            exit(1)
+            click.secho(f'too many results: {params}, searching by each project ...', err=True, fg='yellow')
+            for project in cls.list_projects():
+                if params['project_classname_list']:
+                    click.secho(f'still too many results: {params} ...', err=True, fg='red')
+                    exit(1)
+                params['project_classname_list'] = project
+                yield from cls.search(**params)
 
         for page in range(1, total_page + 1):
-            print(f'>>> crawling page: {page}')
+            click.secho(f'>>> crawling page: {page}/{total_page}', err=True, fg='green')
             params['page'] = page
             soup = WR.get_soup(cls.url, params=params)
             for a in soup.select('#journalList .journal-item strong a'):
-                print(a)
+                click.secho(str(a), err=True, fg='white')
                 context = {}
                 href = a.attrs['href']
                 data = dict(list(cls.get_detail(href)))
@@ -59,9 +68,25 @@ class MedSCI(object):
             value = column.select_one('.font-black').text.strip()
             yield key, value
 
+    @classmethod
+    def list_projects(cls):
+        soup = WR.get_soup(cls.url)
+        for box in soup.select('.input-area .ms-checkbox input'):
+            yield box.attrs['value']
+
+
+@click.command()
+@click.option('-y', '--year', help='the year of approval')
+@click.option('-o', '--outfile', help='the output filename')
+def main(**kwargs):
+    year = kwargs['year']
+    out = open(kwargs['outfile'], 'w') if kwargs['outfile'] else sys.stdout
+
+    with out:
+        for context in MedSCI.search(date_begin=year, date_end=year):
+            out.write(json.dumps(context, ensure_ascii=False) + '\n')
+            # break
+
 
 if __name__ == '__main__':
-    from pprint import pprint
-
-    for each in MedSCI.search(date_begin=2020, date_end=2020):
-        pprint(each)
+    main()

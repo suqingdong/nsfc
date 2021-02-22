@@ -1,7 +1,5 @@
 import json
 
-from dateutil.parser import parse as date_parse
-
 
 def parse(infile):
     with open(infile) as f:
@@ -22,8 +20,8 @@ def parse(infile):
             data['subject_code'] = context['学科代码'].split()[-1]
 
             start, end = context['执行时间'].split(' 至 ')
-            data['start_time'] = date_parse(start + '-01')
-            data['end_time'] = date_parse(end + '-31')
+            data['start_time'] = start.replace('-', '')
+            data['end_time'] = end.replace('-', '')
 
             yield data
 
