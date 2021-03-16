@@ -15,24 +15,32 @@ from nsfc.util.parse_data import parse
 @click.option('-y', '--year', help='the year of searching', required=True)
 @click.option('-c', '--code', help='the code of subject', required=True)
 @click.option('-O', '--outdir', help='the output directory')
+@click.option('-s', '--special', help='search special', is_flag=True)
 def main(**kwargs):
     year = kwargs['year']
     code = kwargs['code']
+    special = kwargs['special']
     letpub = LetPub()
     outdir = kwargs['outdir'] or os.path.join('done', code[0], str(year))
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+
     done = {each.rsplit('.', 1)[0]: 1 for each in os.listdir(outdir)}
 
     code_list = letpub.list_codes
 
     for code in sorted(code_list[code]):
+        print(done)
+        if special:
+            code = code[:3]
+            done = {each.rsplit('.', 1)[0]: 1 for each in os.listdir(outdir)}
+
         if f'{code}.{year}' in done:
             continue
         outfile = f'{outdir}/{code}.{year}.jl'
         try:
             with open(outfile, 'w') as out:
-                for context in letpub.search(code_list, code, start_year=year, end_year=year):
+                for context in letpub.search(code_list, code, start_year=year, end_year=year, special=special):
                     line = json.dumps(context, ensure_ascii=False) + '\n'
                     out.write(line)
             click.secho(f'save file: {outfile}')

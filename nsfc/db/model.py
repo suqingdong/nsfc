@@ -11,7 +11,7 @@ Base = declarative_base()
 class Project(Base):
     __tablename__ = 'project'
 
-    project_id = Column(Integer, primary_key=True, comment='项目编号')
+    project_id = Column(String(20), primary_key=True, comment='项目编号')
 
     title = Column(String(200), comment='项目名称')
     project_type = Column(String(50), comment='项目类型')

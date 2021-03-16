@@ -24,8 +24,10 @@ class LetPub(object):
         return subcategory_list
     
 
-    def search(self, code_list, code, page=1, start_year='', end_year='', subcategory=''):
+    def search(self, code_list, code, page=1, start_year='', end_year='', subcategory='', special=False):
         """项目查询，最多显示20页(200条)，超出时增加项目类别细分查询
+
+            special: 特殊情况，例如一级，二级，三级学科都是A01的情况
         """
         params = {
             'mode': 'advanced',
@@ -40,10 +42,15 @@ class LetPub(object):
             'searchsubmit': 'true',
             'subcategory': subcategory,
         }
-        level = math.ceil(len(code) / 2.)
-        payload.update({
-            'addcomment_s{}'.format(level): code
-        })
+
+        if special:
+            for level in range(2, 5):
+                payload['addcomment_s{}'.format(level)] = code[:3]
+        else:
+            level = math.ceil(len(code) / 2.)
+            payload.update({
+                'addcomment_s{}'.format(level): code
+            })
 
         soup = self.search_page(params, payload)
         total_count = int(soup.select_one('#dict div b').text)
@@ -57,13 +64,13 @@ class LetPub(object):
             if not subcategory:
                 print('too many result, search with subcategory ...')
                 for subcategory in self.subcategory_list:
-                    yield from self.search(code_list, code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
+                    yield from self.search(code_list, code, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory, special=special)
             else:
                 print('too many result, search with subcategory and subclass ...')
                 for subcategory in self.subcategory_list:
                     for code2 in code_list[code[0]][code]:
                         if code2 != code:
-                            yield from self.search(code_list, code2, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory)
+                            yield from self.search(code_list, code2, page=page, start_year=start_year, end_year=end_year, subcategory=subcategory, special=special)
 
         if page < total_page:
             page += 1
@@ -107,8 +114,8 @@ class LetPub(object):
             if line.startswith('subtag['):
                 linelist = line.strip().split("', '")
 
-                code = linelist[4]  # 二级学科
-                code2 = linelist[5]  # 三级学科
+                code = linelist[4]  # 二级学科  A01
+                code2 = linelist[5]  # 三级学科 A0101 
 
                 if len(code) != 5:
                     continue
@@ -131,5 +138,8 @@ if __name__ == '__main__':
     #     print(code)
     #     print(sorted(code_list['A'][code]))
 
-    for context in letpub.search(code_list, 'E0805', start_year=2016, end_year=2016):
+    # for context in letpub.search(code_list, 'E0805', start_year=2016, end_year=2016):
+    #     print(context)
+
+    for context in letpub.search(code_list, 'A03', start_year=1997, end_year=1997, special=True):
         print(context)
