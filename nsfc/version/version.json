@@ -1,7 +1,7 @@
 {
-    "desc": "国家自然科学基金查询系统",
+    "desc": "国家自然科学基金数据查询系统",
     "prog": "nsfc",
     "author": "suqingdong",
-    "author_email": "1078595229@qq.com",
+    "author_email": "suqingdong1114@gmail.com",
     "version": "1.0.0"
 }

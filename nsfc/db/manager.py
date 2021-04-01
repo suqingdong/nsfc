@@ -71,13 +71,17 @@ class Manager(object):
 
 if __name__ == '__main__':
     # uri = 'sqlite:///:memory:'
-    # uri = 'sqlite:///./test.db:'
-    # uri = 'sqlite:////path/to/test.db:'
+    # uri = 'sqlite:///./project.db'
+    # uri = 'sqlite:////path/to/test.db'
     # m = Manager(uri)
     # m.create_table()
 
-    with Manager() as m:
-        m.create_table()
+    uri = 'sqlite:///./project.1997_2000.db'
+
+    with Manager(uri=uri, echo=False) as m:
+        # m.create_table()
+        res = m.query(Project, 'project_id', '10001001')
+        print(dir(res))
 
 
 
