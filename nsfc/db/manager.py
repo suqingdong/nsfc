@@ -15,11 +15,11 @@ class Manager(object):
             - sqlite:////absolute/path/to/db
             - sqlite:///:memory:
     """
-    def __init__(self, uri=None, echo=True, drop=False):
+    def __init__(self, uri=None, echo=True, drop=False, logger=None):
         self.uri = uri or 'sqlite:///:memory:'
-        self.logger = SimpleLogger('Manager')
+        self.logger = logger or SimpleLogger('Manager')
         self.engine = sqlalchemy.create_engine(uri, echo=echo)
-        self.engine.logger = self.logger
+        self.engine.logger.level = self.logger.level
 
         self.session = self.connect()
         self.create_table(drop=drop)

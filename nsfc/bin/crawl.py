@@ -16,6 +16,7 @@ from nsfc.util.parse_data import parse
 @click.command(no_args_is_help=True)
 @click.option('-y', '--year', help='the start year of searching', required=True)
 @click.option('-e', '--end', help='the end year of searching')
+@click.option('-sc', '--subcategory', help='subcategory of searching')
 @click.option('-c', '--code', help='the code of subject', required=True)
 @click.option('-O', '--outdir', help='the output directory', default='done', show_default=True)
 @click.option('-o', '--outfile', help='the output file', default='out.jl', show_default=True)
@@ -31,6 +32,7 @@ def main(**kwargs):
     year = kwargs['year']
     end = kwargs['end'] or year
     code = kwargs['code']
+    subcategory = kwargs['subcategory']
     level = int (kwargs['level']) if kwargs['level'] else None
     count = kwargs['count']
     letpub = LetPub(logger=logger)
@@ -47,7 +49,7 @@ def main(**kwargs):
 
     try:
         with open(outfile, 'w') as out:
-            for context in letpub.search(code, startTime=year, endTime=end, level=level, count=count):
+            for context in letpub.search(code, startTime=year, endTime=end, subcategory=subcategory, level=level, count=count):
                 if not count:
                     line = json.dumps(context, ensure_ascii=False) + '\n'
                     out.write(line)
