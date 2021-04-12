@@ -5,7 +5,7 @@
 
 # [MedSci](https://www.medsci.cn/sci/nsfc.do)
 > 查询不好(单个查询限制500条，资助类别分类不准确)
-> 有2020年数据（不一定全）
+> 有2020年数据（但不是很全）
 
 
 # [NSFC](http://output.nsfc.gov.cn/)
