@@ -3,6 +3,7 @@ import sys
 import json
 
 import click
+from prettytable import PrettyTable
 from simple_loggers import SimpleLogger
 
 # from nsfc import DEFAULT_DB
@@ -37,6 +38,7 @@ examples:
 @click.option('-F', '--format', help='the format of output',
               type=click.Choice(['json', 'jl', 'tsv']), default='jl',
               show_choices=True, show_default=True)
+@click.option('-K', '--keys', help='list the available keys for query', is_flag=True)
 @click.option('-C', '--count', help='just output the out of searching', is_flag=True)
 @click.option('-L', '--limit', help='the count of limit of output', type=int)
 @click.option('-l', '--log-level', help='the level of logging',
@@ -52,6 +54,15 @@ def main(**kwargs):
     dbfile = kwargs['dbfile']
     limit = kwargs['limit']
     outfile = kwargs['outfile']
+
+    if kwargs['keys']:
+        table = PrettyTable(['Key', 'Comment', 'Type'])
+        for k, v in Project.metadata.tables['project'].columns.items():
+            table.add_row([k, v.comment, v.type])
+        for field in table._field_names:
+            table.align[field] = 'l'
+        print(click.style(str(table), fg='cyan'))
+        exit(0)
 
     if not os.path.isfile(dbfile):
         logger.error(f'dbfile not exists! [{dbfile}]')
