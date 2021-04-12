@@ -5,12 +5,7 @@ import json
 import click
 from simple_loggers import SimpleLogger
 
-from nsfc.src.letpub2 import LetPub
-from nsfc.src.official import Official
-
-from nsfc.db.model import Project
-from nsfc.db.manager import Manager
-from nsfc.util.parse_data import parse
+from nsfc.src.letpub import LetPub
 
 
 @click.command(no_args_is_help=True, name='crawl', help='crawl data from website')
