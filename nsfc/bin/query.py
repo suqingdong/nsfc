@@ -5,12 +5,29 @@ import json
 import click
 from simple_loggers import SimpleLogger
 
+# from nsfc import DEFAULT_DB
 from nsfc.db.model import Project
 from nsfc.db.manager import Manager
-from nsfc import DEFAULT_DB
 
+DEFAULT_DB = ''
 
-@click.command(no_args_is_help=True, name='query', help='query data from the local database')
+__epilog__ = click.style('''
+
+\b
+examples:
+    nsfc query -C
+    nsfc query -C -s approval_year 2019
+    nsfc query -C -s approval_year 2019 -s subject_code "%A%"
+    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"
+    nsfc query -o A.2019.jl -s approval_year 2019 -s subject_code "%A%"
+    nsfc query -F tsv -o A.2019.tsv -s approval_year 2019 -s subject_code "%A%"
+    nsfc query -L 5 -s approval_year 2019
+''', fg='yellow')
+
+@click.command(no_args_is_help=True,
+               name='query',
+               epilog=__epilog__,
+               help='query data from the local database')
 @click.option('-d', '--dbfile', help='the database file', default=DEFAULT_DB, show_default=True)
 
 @click.option('-s', '--search', help='the search string, eg. project_id 41950410575', multiple=True, nargs=2)
@@ -27,7 +44,7 @@ from nsfc import DEFAULT_DB
               show_choices=True, show_default=True)
 def main(**kwargs):
 
-    logger = SimpleLogger('QUERY')
+    logger = SimpleLogger('STATS')
     logger.level = logger.level_maps[kwargs['log_level']]
 
     logger.info(f'input arguments: {kwargs}')

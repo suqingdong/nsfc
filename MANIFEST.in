@@ -1,3 +1,2 @@
 include requirements.txt
 include nsfc/version/version.json
-include nsfc/data/*.db
