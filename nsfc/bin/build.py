@@ -5,22 +5,22 @@ import click
 from nsfc.db.model import Project
 from nsfc.db.manager import Manager
 from nsfc.src.official import Official
-from nsfc.util.parse_data import parse
+from nsfc.util.parse_data import parse as parse_data
+from nsfc import DEFAULT_DB
 
 
-@click.command()
-# @click.option('-i', '--infile', help='the input filename', required=True)
+@click.command(no_args_is_help=True, name='build', help='build the local database')
 @click.argument('infiles', nargs=-1)
-@click.option('-d', '--dbfile', help='the path of database file', default='project.db')
+@click.option('-d', '--dbfile', help='the path of database file', default=DEFAULT_DB, show_default=True)
 @click.option('--echo', help='turn echo on for sqlalchemy', is_flag=True)
 @click.option('--drop', help='drop table before creating', is_flag=True)
 @click.option('-no', help='do not get conclusion data', is_flag=True)
-def build(**kwargs):
+def main(**kwargs):
     print(kwargs)
     uri = 'sqlite:///{dbfile}'.format(**kwargs)
     with Manager(uri=uri, echo=kwargs['echo'], drop=kwargs['drop']) as m:
         for infile in kwargs['infiles']:
-            for data in parse(infile):
+            for data in parse_data(infile):
 
                 query_result = m.query(Project, 'project_id', data['project_id']).first()
                 if query_result:
@@ -43,8 +43,7 @@ def build(**kwargs):
 
                 pprint(project.as_dict)
                 m.insert(Project, 'project_id', project)
-                # break
 
 
 if __name__ == '__main__':
-    build()
+    main()

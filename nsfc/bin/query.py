@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 
@@ -6,10 +7,11 @@ from simple_loggers import SimpleLogger
 
 from nsfc.db.model import Project
 from nsfc.db.manager import Manager
+from nsfc import DEFAULT_DB
 
 
-@click.command()
-@click.option('-d', '--dbfile', help='the database file', default='project.merge.db')
+@click.command(no_args_is_help=True, name='query', help='query data from the local database')
+@click.option('-d', '--dbfile', help='the database file', default=DEFAULT_DB, show_default=True)
 
 @click.option('-s', '--search', help='the search string, eg. project_id 41950410575', multiple=True, nargs=2)
 
@@ -33,6 +35,10 @@ def main(**kwargs):
     dbfile = kwargs['dbfile']
     limit = kwargs['limit']
     outfile = kwargs['outfile']
+
+    if not os.path.isfile(dbfile):
+        logger.error(f'dbfile not exists! [{dbfile}]')
+        exit(1)
 
     uri = f'sqlite:///{dbfile}'
     with Manager(uri=uri, echo=False, logger=logger) as m:
@@ -60,9 +66,9 @@ def main(**kwargs):
         logger.debug(str(query))
 
         if kwargs['count']:
-            print(f'count: {query.count()}')
+            logger.info(f'count: {query.count()}')
         elif not query.count():
-            print('no result for your input')
+            logger.warning('no result for your input')
         else:
             out = open(outfile, 'w') if outfile else sys.stdout
             with out:

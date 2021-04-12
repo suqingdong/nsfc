@@ -13,7 +13,7 @@ from nsfc.db.manager import Manager
 from nsfc.util.parse_data import parse
 
 
-@click.command(no_args_is_help=True)
+@click.command(no_args_is_help=True, name='crawl', help='crawl data from website')
 @click.option('-y', '--year', help='the start year of searching', required=True)
 @click.option('-e', '--end', help='the end year of searching')
 @click.option('-sc', '--subcategory', help='subcategory of searching')
