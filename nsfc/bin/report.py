@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 
 import click
@@ -17,6 +18,7 @@ examples:
 
 @click.command(name='report',
                epilog=__epilog__,
+               no_args_is_help=True,
                help='download the conclusion report for given project_id')
 @click.argument('project_id')
 @click.option('-t', '--tmpdir', help='the temporary directory to store pngs', default=tempfile.gettempdir(), show_default=True)
@@ -24,11 +26,11 @@ examples:
 @click.option('-k', '--keep', help='do not the temporary directory after completion', is_flag=True)
 def main(**kwargs):
     
-    tmpdir = tempfile.mktemp(prefix='nsfc-report', dir=kwargs['tmpdir'])
-    Official.get_conclusion_report(kwargs['project_id'], tmpdir=tmpdir, outfile=kwargs['outfile'])
-
-    if not kwargs['keep']:
-        os.removedirs(tmpdir)
+    tmpdir = tempfile.mktemp(prefix='nsfc-report-', dir=kwargs['tmpdir'])
+    if Official.get_conclusion_report(kwargs['project_id'], tmpdir=tmpdir, outfile=kwargs['outfile']):
+        if not kwargs['keep']:
+            shutil.rmtree(tmpdir)
+            Official.logger.debug(f'tempdir deleted: {tmpdir}')
 
 
 if __name__ == "__main__":

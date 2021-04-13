@@ -107,12 +107,14 @@ class Official(object):
             cls.logger.debug(f'save png: {png}')
         
         if pdf:
+            cls.logger.debug('converting *png to pdf')
             outfile = outfile or f'{ratify_number}.pdf'
             with open(outfile, 'wb') as out:
                 out.write(img2pdf.convert(pngs))
 
             size = human_readable.file_size(os.stat(outfile).st_size)
             cls.logger.info(f'save pdf: {outfile} [{size}]')
+        return True
 
     @classmethod
     def get_conclusion_report_images(cls, projectid):

@@ -4,5 +4,6 @@ openpyxl
 requests
 sqlalchemy
 prettytable
+human-readable
 webrequests
 simple-loggers
