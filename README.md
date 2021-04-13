@@ -49,8 +49,8 @@ nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.jl
 ```
 
 ```bash
-# 结果输出为tsv文件
-nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.jl -F tsv
+# 结果输出为xlsx文件
+nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.xlsx -F xlsx
 ```
 
 ```bash

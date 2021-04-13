@@ -13,18 +13,36 @@ from nsfc.db.model import Project
 from nsfc.db.manager import Manager
 
 
-__epilog__ = click.style('''
+__epilog__ = click.style('''\
+examples:
 
 \b
-examples:
-    nsfc query -K                                                                   # 列出可用的查询字段
-    nsfc query -C                                                                   # 输出数量
-    nsfc query -C -s approval_year 2019                                             # 按批准年份查询
-    nsfc query -C -s approval_year 2019 -s subject_code "%A%"                       # 按批准年份+学科代码(模糊)
-    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"                # 批准年份也可以是一个区间
-    nsfc query -o A.2019.jl -s approval_year 2019 -s subject_code "%A%"             # 结果输出为.jl文件
-    nsfc query -F tsv -o A.2019.tsv -s approval_year 2019 -s subject_code "%A%"     # 结果输出为tsv文件
-    nsfc query -L 5 -s approval_year 2019                                           # 限制最大输出条数
+# 查看帮助
+nsfc query
+\b
+# 列出可用的查询字段
+nsfc query -K
+\b
+# 输出数量
+nsfc query -C
+\b
+# 按批准年份查询
+nsfc query -C -s approval_year 2019
+\b
+# 按批准年份+学科代码(模糊)
+nsfc query -C -s approval_year 2019 -s subject_code "%A%"
+\b
+# 批准年份也可以是一个区间
+nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"
+\b
+# 结果输出为.jl文件
+nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.jl
+\b
+# 结果输出为xlsx文件
+nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.xlsx -F xlsx
+\b
+# 限制最大输出条数
+nsfc query -L 5 -s approval_year 2019
 ''', fg='yellow')
 
 @click.command(no_args_is_help=True,
