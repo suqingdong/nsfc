@@ -6,23 +6,23 @@ import click
 from prettytable import PrettyTable
 from simple_loggers import SimpleLogger
 
-# from nsfc import DEFAULT_DB
+from nsfc import DEFAULT_DB, version_info
 from nsfc.db.model import Project
 from nsfc.db.manager import Manager
 
-DEFAULT_DB = ''
 
 __epilog__ = click.style('''
 
 \b
 examples:
-    nsfc query -C
-    nsfc query -C -s approval_year 2019
-    nsfc query -C -s approval_year 2019 -s subject_code "%A%"
-    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"
-    nsfc query -o A.2019.jl -s approval_year 2019 -s subject_code "%A%"
-    nsfc query -F tsv -o A.2019.tsv -s approval_year 2019 -s subject_code "%A%"
-    nsfc query -L 5 -s approval_year 2019
+    nsfc query -K                                                                   # 列出可用的查询字段
+    nsfc query -C                                                                   # 输出数量
+    nsfc query -C -s approval_year 2019                                             # 按批准年份查询
+    nsfc query -C -s approval_year 2019 -s subject_code "%A%"                       # 按批准年份+学科代码(模糊)
+    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"                # 批准年份可以是一个区间
+    nsfc query -o A.2019.jl -s approval_year 2019 -s subject_code "%A%"             # 结果输出为.jl文件
+    nsfc query -F tsv -o A.2019.tsv -s approval_year 2019 -s subject_code "%A%"     # 结果输出为tsv文件
+    nsfc query -L 5 -s approval_year 2019                                           # 限制最大输出条数
 ''', fg='yellow')
 
 @click.command(no_args_is_help=True,
@@ -66,6 +66,9 @@ def main(**kwargs):
 
     if not os.path.isfile(dbfile):
         logger.error(f'dbfile not exists! [{dbfile}]')
+        baidu = version_info['baidu_data']
+        logger.info(f'可通过百度网盘下载需要的数据：{baidu}\n'
+                    f'下载完成后可通过-d参数指定数据库文件，也可以拷贝文件到：{DEFAULT_DB}')
         exit(1)
 
     uri = f'sqlite:///{dbfile}'
