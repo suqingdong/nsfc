@@ -8,8 +8,14 @@ from nsfc.bin.query import main as query_cli
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-@click.group(help=version_info['desc'], context_settings=CONTEXT_SETTINGS)
-@click.version_option(version=version_info['version'])
+__epilog__ = click.style(f'''\
+contact: {version_info['author']} <{version_info['author_email']}>
+''', fg='cyan')
+
+@click.group(help=click.style(version_info['desc'], bold=True, fg='green'),
+             epilog=__epilog__,
+             context_settings=CONTEXT_SETTINGS)
+@click.version_option(version=version_info['version'], prog_name=version_info['prog'])
 def cli(**kwargs):
     pass
 
@@ -19,7 +25,6 @@ def main():
     cli.add_command(build_cli)
     cli.add_command(query_cli)
     cli()
-
 
 
 if __name__ == '__main__':

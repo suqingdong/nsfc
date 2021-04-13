@@ -1,4 +1,7 @@
 click
+openpyxl
+requests
 sqlalchemy
+prettytable
 webrequests
 simple-loggers

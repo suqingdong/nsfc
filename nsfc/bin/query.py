@@ -2,6 +2,8 @@ import os
 import sys
 import json
 
+import openpyxl
+from openpyxl.styles import Font, PatternFill
 import click
 from prettytable import PrettyTable
 from simple_loggers import SimpleLogger
@@ -19,7 +21,7 @@ examples:
     nsfc query -C                                                                   # 输出数量
     nsfc query -C -s approval_year 2019                                             # 按批准年份查询
     nsfc query -C -s approval_year 2019 -s subject_code "%A%"                       # 按批准年份+学科代码(模糊)
-    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"                # 批准年份可以是一个区间
+    nsfc query -C -s approval_year 2015-2019 -s subject_code "%C01%"                # 批准年份也可以是一个区间
     nsfc query -o A.2019.jl -s approval_year 2019 -s subject_code "%A%"             # 结果输出为.jl文件
     nsfc query -F tsv -o A.2019.tsv -s approval_year 2019 -s subject_code "%A%"     # 结果输出为tsv文件
     nsfc query -L 5 -s approval_year 2019                                           # 限制最大输出条数
@@ -36,7 +38,7 @@ examples:
 @click.option('-o', '--outfile', help='the output filename')
 
 @click.option('-F', '--format', help='the format of output',
-              type=click.Choice(['json', 'jl', 'tsv']), default='jl',
+              type=click.Choice(['json', 'jl', 'tsv', 'xlsx']), default='jl',
               show_choices=True, show_default=True)
 @click.option('-K', '--keys', help='list the available keys for query', is_flag=True)
 @click.option('-C', '--count', help='just output the out of searching', is_flag=True)
@@ -101,22 +103,42 @@ def main(**kwargs):
         elif not query.count():
             logger.warning('no result for your input')
         else:
-            out = open(outfile, 'w') if outfile else sys.stdout
-            with out:
-                if kwargs['format'] == 'json':
-                    data = [{k: v for k, v in row.__dict__.items() if k != '_sa_instance_state'} for row in query]
-                    out.write(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-                else:
-                    for n, row in enumerate(query):
-                        context = {k: v for k, v in row.__dict__.items() if k != '_sa_instance_state'}
-                        if n == 0 and kwargs['format'] == 'tsv':
-                            title = '\t'.join(context.keys())
-                            out.write(title + '\n')
-                        if kwargs['format'] == 'tsv':
-                            line = '\t'.join(map(str, context.values()))
-                        else:
-                            line = json.dumps(context, ensure_ascii=False)
-                        out.write(line + '\n')
+            if outfile and kwargs['format'] == 'xlsx':
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = 'NSFC-RESULT'
+                title = [k for k, v in query.first().__dict__.items() if k != '_sa_instance_state']
+                ws.append(title)
+                for col, v in enumerate(title,1 ):
+                    _ = ws.cell(row=1, column=col, value=v)
+                    _.font = Font(color='FFFFFF', bold=True)
+                    _.fill = PatternFill(start_color='000000', end_color='000000', fill_type='solid')
+
+                for n, row in enumerate(query):
+                    context = [v for k, v in row.__dict__.items() if k != '_sa_instance_state']
+                    ws.append(context)
+
+                ws.freeze_panes = 'A2'
+                wb.save(outfile)
+            else:
+                out = open(outfile, 'w') if outfile else sys.stdout
+                with out:
+                    if kwargs['format'] == 'json':
+                        data = [{k: v for k, v in row.__dict__.items() if k != '_sa_instance_state'} for row in query]
+                        out.write(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+                    else:
+                        for n, row in enumerate(query):
+                            context = {k: v for k, v in row.__dict__.items() if k != '_sa_instance_state'}
+                            if n == 0 and kwargs['format'] == 'tsv':
+                                title = '\t'.join(context.keys())
+                                out.write(title + '\n')
+                            if kwargs['format'] == 'tsv':
+                                line = '\t'.join(map(str, context.values()))
+                            else:
+                                line = json.dumps(context, ensure_ascii=False)
+                            out.write(line + '\n')
+            if outfile:
+                logger.info(f'save file: {outfile}')
 
 
 if __name__ == '__main__':
