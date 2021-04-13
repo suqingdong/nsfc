@@ -1,3 +1,7 @@
+[![Downloads](https://pepy.tech/badge/nsfc)](https://pepy.tech/project/nsfc)
+![GitHub last commit](https://img.shields.io/github/last-commit/suqingdong/nsfc)
+![GitHub Repo stars](https://img.shields.io/github/stars/suqingdong/nsfc?style=social)
+
 # 国家自然科学基金数据查询系统
 
 ## 安装
@@ -11,6 +15,7 @@ pip3 install nsfc
 - 下载所需的数据库文件，如project.A.sqlite3, 或全部数据project.all.sqlite3
 - 保存至`nsfc`的安装路径下的`data`目录下, 如：`/path/to/site-packages/nsfc/data/project.db`
 - 或者保存至`HOME`路径下的`nsfc_data`目录下，如`~/nsfc_data/project.db`
+- 也可以通过`-d`参数指定要使用的数据库文件
 
 ## 使用示例
 ```bash
