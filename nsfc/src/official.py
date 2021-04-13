@@ -1,8 +1,15 @@
+import os
+
+import img2pdf
+import human_readable
+
 from webrequests import WebRequest as WR
+from simple_loggers import SimpleLogger
 
 
 class Official(object):
     base_url = 'http://output.nsfc.gov.cn'
+    logger = SimpleLogger('Official')
 
     field_codes = WR.get_response(base_url + '/common/data/fieldCode').json()['data']
 
@@ -71,15 +78,57 @@ class Official(object):
     @classmethod
     def get_detail_data(cls, projectid):
         url = cls.base_url + '/baseQuery/data/conclusionProjectInfo/' + projectid
-        print(url)
         data = WR.get_response(url).json()['data']
         return data
 
+    @classmethod
+    def get_conclusion_report(cls, ratify_number, tmpdir='tmp', pdf=True, outfile=None):
+        data = cls.get_conclusion_data(ratify_number, detail=False)
+        if not data:
+            cls.logger.warning(f'no conclusion result for: {ratify_number}')
+            return
+
+        images = list(cls.get_conclusion_report_images(data['projectid']))
+
+        if not os.path.exists(tmpdir):
+            os.makedirs(tmpdir)
+        
+        pngs = []
+        for n, url in enumerate(images, 1):
+            name = os.path.basename(url)
+            png = f'{tmpdir}/{name}.png'
+            pngs.append(png)
+            cls.logger.debug(f'[{n}/{len(images)}] download png: {url} => {png}')
+
+            resp = WR.get_response(url, stream=True)
+            with open(png, 'wb') as out:
+                for chunk in resp.iter_content(chunk_size=512):
+                    out.write(chunk)
+            cls.logger.debug(f'save png: {png}')
+        
+        if pdf:
+            outfile = outfile or f'{ratify_number}.pdf'
+            with open(outfile, 'wb') as out:
+                out.write(img2pdf.convert(pngs))
+
+            size = human_readable.file_size(os.stat(outfile).st_size)
+            cls.logger.info(f'save pdf: {outfile} [{size}]')
+
+    @classmethod
+    def get_conclusion_report_images(cls, projectid):
+        url = cls.base_url + '/baseQuery/data/completeProjectReport'
+        index = 1
+        while True:
+            payload = {
+                'id': projectid,
+                'index': index
+            }
+            res = WR.get_response(url, method='POST', data=payload).json()['data']
+            if not res['hasnext']:
+                break
+            yield cls.base_url + res['url']
+            index += 1
+
 
 if __name__ == '__main__':
-    import pprint
-    # pprint.pprint(Official.list_root_codes())
-    # pprint.pprint(Official.list_child_codes('A01'))
-    # pprint.pprint(Official.list_child_codes('H'))
-    pprint.pprint(Official.get_conclusion_data('11571017'))
-    # pprint.pprint(Official.get_conclusion_data('11571017x'))
+    Official.get_conclusion_report('20671004')

@@ -4,6 +4,7 @@ from nsfc import version_info
 from nsfc.bin.crawl import main as crawl_cli
 from nsfc.bin.build import main as build_cli
 from nsfc.bin.query import main as query_cli
+from nsfc.bin.report import main as report_cli
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -24,6 +25,7 @@ def main():
     cli.add_command(crawl_cli)
     cli.add_command(build_cli)
     cli.add_command(query_cli)
+    cli.add_command(report_cli)
     cli()
 
 
