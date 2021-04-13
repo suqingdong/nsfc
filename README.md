@@ -18,6 +18,7 @@ pip3 install nsfc
 - 也可以通过`-d`参数指定要使用的数据库文件
 
 ## 使用示例
+### 本地查询
 ```bash
 # 查看帮助
 nsfc query
@@ -69,4 +70,22 @@ nsfc query -s approval_year 2019 -s subject_code "%C0501%" -o C0501.2019.xlsx -F
 ```bash
 # 限制最大输出条数
 nsfc query -L 5 -s approval_year 2019                                           
+```
+
+#### 结题报告下载
+```bash
+nsfc report 20671004
+
+nsfc report 20671004 -o out.pdf
+```
+
+### 其他功能
+#### LetPub数据获取
+```bash
+nsfc crawl
+```
+
+#### 本地数据库构建/更新
+```bash
+nsfc build
 ```
