@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-version_info = json.load(open(os.path.join(BASE_DIR, 'nsfc', 'version', 'version.json')))
+version_info = json.load(codecs.open(os.path.join(BASE_DIR, 'nsfc', 'version', 'version.json'), encoding='utf-8'))
 
 
 setup(
