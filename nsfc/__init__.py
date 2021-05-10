@@ -9,7 +9,7 @@ version_info = json.load(codecs.open(version_file, encoding='utf-8'))
 
 __version__ = version_info['version']
 
-DEFAULT_DB = os.path.join(BASE_DIR, 'data', 'proejct.db')
+DEFAULT_DB = os.path.join(BASE_DIR, 'data', 'project.db')
 HOME = os.path.expanduser('~')
 
 if not os.path.isfile(DEFAULT_DB):
