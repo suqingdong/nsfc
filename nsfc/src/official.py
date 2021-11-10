@@ -8,7 +8,7 @@ from simple_loggers import SimpleLogger
 
 
 class Official(object):
-    base_url = 'http://output.nsfc.gov.cn'
+    base_url = 'http://kd.nsfc.gov.cn'
     logger = SimpleLogger('Official')
 
     field_codes = WR.get_response(base_url + '/common/data/fieldCode').json()['data']
