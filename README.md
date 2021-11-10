@@ -1,6 +1,8 @@
+![PyPI](https://img.shields.io/pypi/v/nsfc?color=red&label=latest%20version)
 [![Downloads](https://pepy.tech/badge/nsfc)](https://pepy.tech/project/nsfc)
 ![GitHub last commit](https://img.shields.io/github/last-commit/suqingdong/nsfc)
-![GitHub Repo stars](https://img.shields.io/github/stars/suqingdong/nsfc?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/suqingdong/nsfc?color=orange)
+![GitHub forks](https://img.shields.io/github/forks/suqingdong/nsfc?color=%23CCAA88)
 
 # 国家自然科学基金数据查询系统
 
