@@ -93,3 +93,8 @@ nsfc build
 #### 其他说明
 - 目前基本上只有2019年之前的数据，2020年的数据很少
 - 后续有数据时会再更新
+
+#### 更新记录
+- [2021-11-10] version 2.0.4
+    - update base_url of Official
+    - update url of Official.get_conclusion_data
