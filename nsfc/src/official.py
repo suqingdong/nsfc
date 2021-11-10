@@ -57,7 +57,7 @@ class Official(object):
         """
             获取指定项目批准号的结题数据
         """
-        url = cls.base_url + '/baseQuery/data/conclusionQueryResultsData'
+        url = cls.base_url + '/baseQuery/data/supportQueryResultsData'
         payload = {
             'ratifyNo': ratify_number,
             'queryType': 'input',
