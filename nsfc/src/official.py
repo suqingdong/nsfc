@@ -1,5 +1,6 @@
 import os
 
+import requests
 import img2pdf
 import human_readable
 
@@ -8,19 +9,10 @@ from simple_loggers import SimpleLogger
 
 
 class Official(object):
-    base_url = 'http://kd.nsfc.gov.cn'
+    base_url = 'https://kd.nsfc.gov.cn'
     logger = SimpleLogger('Official')
 
-    field_codes = WR.get_response(base_url + '/common/data/fieldCode').json()['data']
-
-    @classmethod
-    def get_field_codes(cls):
-        """
-            所有的学科代码
-        """
-        url = cls.base_url + '/common/data/fieldCode'
-        print(url)
-        return WR.get_response(url).json()['data']
+    field_codes = WR.get_response(base_url + '/api/common/fieldCode').json()['data']
 
     @classmethod
     def list_root_codes(cls):
@@ -57,11 +49,11 @@ class Official(object):
         """
             获取指定项目批准号的结题数据
         """
-        url = cls.base_url + '/baseQuery/data/supportQueryResultsData'
+        url = cls.base_url + '/api/baseQuery/completionQueryResultsData'
         payload = {
             'ratifyNo': ratify_number,
-            'queryType': 'input',
-            'complete': 'true',
+            # 'queryType': 'input',
+            # 'complete': 'true',
         }
         result = WR.get_response(url, method='POST', json=payload).json()['data']['resultsData']
         data = {}
@@ -77,7 +69,7 @@ class Official(object):
 
     @classmethod
     def get_detail_data(cls, projectid):
-        url = cls.base_url + '/baseQuery/data/conclusionProjectInfo/' + projectid
+        url = cls.base_url + '/api/baseQuery/conclusionProjectInfo/' + projectid
         data = WR.get_response(url).json()['data']
         return data
 
@@ -118,7 +110,7 @@ class Official(object):
 
     @classmethod
     def get_conclusion_report_images(cls, projectid):
-        url = cls.base_url + '/baseQuery/data/completeProjectReport'
+        url = cls.base_url + '/api/baseQuery/completeProjectReport'
         index = 1
         while True:
             payload = {
