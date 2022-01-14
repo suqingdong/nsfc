@@ -26,7 +26,7 @@ class MedSCI(object):
         soup = WR.get_soup(cls.url, params=params)
         total_count = int(re.findall(r'\d+', soup.select_one('.list-result').text)[0])
         total_page = math.ceil(total_count / 15.)
-        click.secho(f'total page: {total_page}, total count: {total_count}', err=True, fg='yellow')
+        click.secho(f'total page: {total_page}, total count: {total_count} [{params}]', err=True, fg='yellow')
 
         if total_count == 500:
             click.secho(f'too many results: {params}, searching by each project ...', err=True, fg='yellow')

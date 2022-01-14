@@ -97,6 +97,5 @@ nsfc build
 - 后续有数据时会再更新
 
 #### 更新记录
-- [2021-11-10] version 2.0.3
-    - update base_url of Official
-    - update url of Official.get_conclusion_data
+- [2022-01-14] version 2.0.4
+    - update the urls of Official
